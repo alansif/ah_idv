@@ -14,6 +14,16 @@ export default new Router({
       component: Info
     },
     {
+      path: '/tds',
+      name: 'tds',
+      component: () => import('./views/Tds.vue')
+    },
+    {
+      path: '/pepkg',
+      name: 'pepkg',
+      component: () => import('./views/Pepkg.vue')
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting

@@ -1,15 +1,14 @@
 <template>
-    <div class="tdsframe">
-        <div class="tdshead">
+    <div class="pepkgframe">
+        <div class="pepkghead">
             <div style="margin-left:32px">
-                请选择您关注的目标疾病
+                请选择检查套餐
             </div>
         </div>
-        <div class="tdstree">
-            <el-tree :data="tdsdata" show-checkbox node-key="id" ref="tree"></el-tree>
+        <div class="pepkgpanel">
         </div>
         <div style="text-align:center">
-            <el-button type="primary" @click="nextstep">下一步</el-button>
+            <el-button type="primary">下一步</el-button>
         </div>
     </div>
 </template>
@@ -17,10 +16,10 @@
 <script>
     import {restbase} from '../rest'
     export default {
-        name: 'tds',
+        name: 'pepkg',
         data() {
             return {
-                tdsdata: []
+                pepkgdata: []
             }
         },
         mounted() {
@@ -28,37 +27,25 @@
         },
         methods: {
             fetchData() {
-                this.$http.get(restbase()+"tds")
+                if (!this.$root.tds || this.$root.tds.length === 0)
+                    return;
+                this.$http.get(restbase()+"pepkg", {params:{tds:this.$root.tds}})
                 .then(response=>{
                     const d = response.data.data;
-                    this.tdsdata = [];
-                    d.forEach(e => {
-                        let i = this.tdsdata.find(v=>{
-                            return e.TSCategory === v.label
-                        });
-                        if (i === undefined) {
-                            this.tdsdata.push({label:e.TSCategory, children:[{label:e.TSName, id:e.TSID, value:e}]});
-                        } else {
-                            i.children.push({label:e.TSName, id:e.TSID, value:e});
-                        }
-                    });
+                    console.log(d);
                 }, response=>{
                     console.error(response);
                 })
                 .catch(response=>{
                     console.error(response);
                 })
-            },
-            nextstep() {
-                this.$root.tds = this.$refs.tree.getCheckedKeys(true);
-                this.$router.push('pepkg');
             }
         }
     }
 </script>
 
 <style>
-    .tdsframe {
+    .pepkgframe {
         margin:0 auto;
         width:100%;
         padding-bottom:26px;
@@ -69,7 +56,7 @@
         background-color: white;
         margin-bottom: 40px;
     }
-    .tdshead {
+    .pepkghead {
         width:100%;
         height:48px;
         line-height:48px;
@@ -78,7 +65,7 @@
         background-color:#80A0D0;
         border-radius:4px 4px 0 0;
     }
-    .tdstree {
+    .pepkgpanel {
         padding: 16px 20px 20px 20px;
     }
 </style>

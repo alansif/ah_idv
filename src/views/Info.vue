@@ -17,7 +17,7 @@
             </el-form-item>
         </el-form>
         <div style="text-align:center">
-        <router-link to="/about"><el-button type="primary">下一步</el-button></router-link>
+        <router-link to="/tds"><el-button type="primary">下一步</el-button></router-link>
         </div>
     </div>
 </template>
@@ -58,6 +58,6 @@
         border-radius:4px 4px 0 0;
     }
     .infoform {
-        padding: 30px 70px 10px 30px;
+        padding: 30px 170px 10px 130px;
     }
 </style>
