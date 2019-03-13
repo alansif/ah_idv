@@ -6,7 +6,14 @@
             </div>
         </div>
         <div class="tdstree">
-            <el-tree :data="tdsdata" show-checkbox node-key="id" ref="tree"></el-tree>
+            <el-tree :data="tdsdata" show-checkbox node-key="id" ref="tree">
+                <div slot-scope="{ node, data }">
+                    <el-tooltip placement="right" effect="light" :disabled="data.value === undefined">
+                        <div slot="content">{{ data.value ? data.value.TSRemark : null}}</div>
+                        <span>{{ node.label }}</span>
+                    </el-tooltip>
+                </div>
+            </el-tree>
         </div>
         <div style="text-align:center">
             <el-button type="primary" @click="nextstep">下一步</el-button>
@@ -31,6 +38,7 @@
                 this.$http.get(restbase()+"tds")
                 .then(response=>{
                     const d = response.data.data;
+                    this.$root.alltds = d;
                     this.tdsdata = [];
                     d.forEach(e => {
                         let i = this.tdsdata.find(v=>{

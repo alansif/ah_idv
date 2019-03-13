@@ -6,6 +6,18 @@
             </div>
         </div>
         <div class="pepkgpanel">
+            <el-collapse style="font-size:18px">
+                <el-collapse-item v-for="v in pepkgdata" :key="v.TSID" :title="getTds(v.TSID).TSName" :name="v.TSID">
+                    <el-table style="font-size:12px" :data="v.children">
+                        <el-table-column label="基础套餐">
+                        </el-table-column>
+                        <el-table-column label="升级套餐1">
+                        </el-table-column>
+                        <el-table-column label="升级套餐2">
+                        </el-table-column>
+                    </el-table>
+                </el-collapse-item>
+            </el-collapse>
         </div>
         <div style="text-align:center">
             <el-button type="primary">下一步</el-button>
@@ -23,6 +35,7 @@
             }
         },
         mounted() {
+            this.fetchFt2();
             this.fetchData();
         },
         methods: {
@@ -32,7 +45,44 @@
                 this.$http.get(restbase()+"pepkg", {params:{tds:this.$root.tds}})
                 .then(response=>{
                     const d = response.data.data;
-                    console.log(d);
+                    let data1 = [];
+                    d.forEach(e => {
+                        let i = data1.find(v=>{
+                            return e.TSID === v.TSID
+                        });
+                        if (i === undefined) {
+                            data1.push({TSID:e.TSID, pkgs:[e]});
+                        } else {
+                            i.pkgs.push(e);
+                        }
+                    });
+                    console.log(data1);
+                    data1.forEach(td => {
+                        td.GIDs = [];
+                        td.forEach(pkg => {
+                            pkg.GIDs.forEach(GID => {
+                                if (td.GIDs.indexOf(GID) === -1) {
+                                    td.GIDs.push(GID);
+                                }
+                            });
+                        });
+                    });
+                }, response=>{
+                    console.error(response);
+                })
+                .catch(response=>{
+                    console.error(response);
+                })
+            },
+            getTds(TSID) {
+                return this.$root.alltds.find(v=>{
+                    return v.TSID === TSID;
+                });
+            },
+            fetchFt2() {
+                this.$http.get(restbase()+"ft2")
+                .then(response=>{
+                    this.$root.ft2 = response.data.data;
                 }, response=>{
                     console.error(response);
                 })
@@ -66,6 +116,6 @@
         border-radius:4px 4px 0 0;
     }
     .pepkgpanel {
-        padding: 16px 20px 20px 20px;
+        padding: 16px 36px 20px 36px;
     }
 </style>
