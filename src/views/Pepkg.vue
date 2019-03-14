@@ -120,9 +120,11 @@
                     });
                     this.pepkgdata = data1;
                 }, response=>{
+                    // eslint-disable-next-line
                     console.error(response);
                 })
                 .catch(response=>{
+                    // eslint-disable-next-line
                     console.error(response);
                 })
             },
@@ -136,9 +138,11 @@
                 .then(response=>{
                     this.$root.ft2 = response.data.data;
                 }, response=>{
+                    // eslint-disable-next-line
                     console.error(response);
                 })
                 .catch(response=>{
+                    // eslint-disable-next-line
                     console.error(response);
                 })
             },

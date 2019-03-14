@@ -51,9 +51,11 @@
                         }
                     });
                 }, response=>{
+                    // eslint-disable-next-line
                     console.error(response);
                 })
                 .catch(response=>{
+                    // eslint-disable-next-line
                     console.error(response);
                 })
             },
