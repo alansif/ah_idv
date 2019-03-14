@@ -24,6 +24,11 @@ export default new Router({
       component: () => import('./views/Pepkg.vue')
     },
     {
+      path: '/order',
+      name: 'order',
+      component: () => import('./views/Order.vue')
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting

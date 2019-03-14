@@ -6,21 +6,61 @@
             </div>
         </div>
         <div class="pepkgpanel">
-            <el-collapse style="font-size:18px">
+            <el-collapse accordion>
                 <el-collapse-item v-for="v in pepkgdata" :key="v.TSID" :title="getTds(v.TSID).TSName" :name="v.TSID">
-                    <el-table style="font-size:12px" :data="v.children">
-                        <el-table-column label="基础套餐">
+                    <el-table stripe style="font-size:12px" :data="v.GIDs">
+                        <el-table-column type="expand">
+                            <template slot-scope="scope">
+                                <span>{{getG(scope.row.GID).GRemarks}}</span>
+                            </template>
                         </el-table-column>
-                        <el-table-column label="升级套餐1">
+                        <el-table-column label="检查项目" prop="GID">
+                            <template slot-scope="scope">
+                                {{ getG(scope.row.GID).GNAME }}
+                            </template>
                         </el-table-column>
-                        <el-table-column label="升级套餐2">
+                        <el-table-column v-if="v.pkgs.length > 0" align="center">
+                            <template slot-scope="scope">
+                                <i v-if="scope.row.L1" class="el-icon-check checkflag"></i>
+                            </template>
+                            <template slot="header">
+                                <span style="padding-right:6px">基础套餐</span>
+                                <el-checkbox v-model="selectedpkgs[v.pkgs[0].PKID]"></el-checkbox>
+                            </template>
+                        </el-table-column>
+                        <el-table-column v-if="v.pkgs.length > 1" align="center">
+                            <template slot-scope="scope">
+                                <i v-if="scope.row.L2" class="el-icon-check checkflag"></i>
+                            </template>
+                            <template slot="header">
+                                <span style="padding-right:6px">升级套餐1</span>
+                                <el-checkbox v-model="selectedpkgs[v.pkgs[1].PKID]"></el-checkbox>
+                            </template>
+                        </el-table-column>
+                        <el-table-column v-if="v.pkgs.length > 2" align="center">
+                            <template slot-scope="scope">
+                                <i v-if="scope.row.L3" class="el-icon-check checkflag"></i>
+                            </template>
+                            <template slot="header">
+                                <span style="padding-right:6px">升级套餐2</span>
+                                <el-checkbox v-model="selectedpkgs[v.pkgs[2].PKID]"></el-checkbox>
+                            </template>
+                        </el-table-column>
+                        <el-table-column v-if="v.pkgs.length > 3" align="center">
+                            <template slot-scope="scope">
+                                <i v-if="scope.row.L4" class="el-icon-check checkflag"></i>
+                            </template>
+                            <template slot="header">
+                                <span style="padding-right:6px">升级套餐3</span>
+                                <el-checkbox v-model="selectedpkgs[v.pkgs[3].PKID]"></el-checkbox>
+                            </template>
                         </el-table-column>
                     </el-table>
                 </el-collapse-item>
             </el-collapse>
         </div>
         <div style="text-align:center">
-            <el-button type="primary">下一步</el-button>
+            <el-button type="primary" @click="nextstep">下一步</el-button>
         </div>
     </div>
 </template>
@@ -31,7 +71,8 @@
         name: 'pepkg',
         data() {
             return {
-                pepkgdata: []
+                pepkgdata: [],
+                selectedpkgs: {}
             }
         },
         mounted() {
@@ -45,6 +86,7 @@
                 this.$http.get(restbase()+"pepkg", {params:{tds:this.$root.tds}})
                 .then(response=>{
                     const d = response.data.data;
+                    this.$root.pkgs = d;
                     let data1 = [];
                     d.forEach(e => {
                         let i = data1.find(v=>{
@@ -56,17 +98,27 @@
                             i.pkgs.push(e);
                         }
                     });
-                    console.log(data1);
                     data1.forEach(td => {
                         td.GIDs = [];
-                        td.forEach(pkg => {
+                        td.pkgs.forEach(pkg => {
                             pkg.GIDs.forEach(GID => {
-                                if (td.GIDs.indexOf(GID) === -1) {
-                                    td.GIDs.push(GID);
+                                let g = td.GIDs.find(e=>{
+                                    return e.GID === GID
+                                });
+                                if (g === undefined) {
+                                    let a = {GID:GID};
+                                    for (let j = 1; j <= td.pkgs.length; ++j) {
+                                        a['L' + j] = false;
+                                    }
+                                    a['L'+pkg.PKLevel] = true;
+                                    td.GIDs.push(a);
+                                } else {
+                                    g['L'+pkg.PKLevel] = true;
                                 }
                             });
                         });
                     });
+                    this.pepkgdata = data1;
                 }, response=>{
                     console.error(response);
                 })
@@ -89,6 +141,20 @@
                 .catch(response=>{
                     console.error(response);
                 })
+            },
+            getG(GID) {
+                return this.$root.ft2.find(v=>{
+                    return v.Gid === GID;
+                });
+            },
+            nextstep() {
+                const ar = Object.keys(this.selectedpkgs).filter(key=>this.selectedpkgs[key]);
+                this.$root.selectedpkgs = ar.map(v=>
+                    this.$root.pkgs.find(p=>
+                        String(p.PKID) === v
+                    )
+                );
+                this.$router.push('order');
             }
         }
     }
@@ -117,5 +183,23 @@
     }
     .pepkgpanel {
         padding: 16px 36px 20px 36px;
+    }
+/*
+    .el-table td {
+        padding: 4px 0;
+    }
+    .el-collapse-item__header, .el-collapse-item__wrap {
+        color:#555;
+        background-color: #C0D0F0;
+        padding:0 15px;
+    }
+    .el-collapse-item__content {
+        padding-bottom:15px;
+    }
+*/
+    .checkflag {
+        color:#0C8;
+        font-size:18px;
+        font-weight:bold;
     }
 </style>
