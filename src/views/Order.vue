@@ -10,10 +10,10 @@
                 <el-table :data="selectedpkgs">
                     <el-table-column label="目标疾病">
                         <template slot-scope="scope">
-                            {{ getTds(scope.row.TSID).TSName }}
+                            {{ getTds(scope.row.TSID).TSRemark }}
                         </template>
                     </el-table-column>
-                    <el-table-column label="套餐" prop="PKID">
+                    <el-table-column label="套餐" prop="PKID" :width="150">
                         <template slot-scope="scope">
                             {{ getPkgName(scope.row.PKLevel) }}
                         </template>
@@ -48,6 +48,7 @@
             </div>
         </div>
         <div style="text-align:center;margin-bottom:60px;">
+            <router-link to="/pepkg"><el-button type="primary" style="margin-right:20px">上一步</el-button></router-link>
             <el-button type="primary">确定</el-button>
         </div>
     </div>

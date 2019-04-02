@@ -9,11 +9,17 @@
             <el-form-item label="姓名">
                 <el-input :readonly="true" v-model="form.name"></el-input>
             </el-form-item>
+            <el-form-item label="身份证号">
+                <el-input :readonly="true" v-model="form.idnumber"></el-input>
+            </el-form-item>
             <el-form-item label="性别">
                 <el-input :readonly="true" v-model="form.gender"></el-input>
             </el-form-item>
             <el-form-item label="出生日期">
                 <el-input :readonly="true" v-model="form.dateofbirth"></el-input>
+            </el-form-item>
+            <el-form-item label="年龄">
+                <el-input :readonly="true" v-model="age"></el-input>
             </el-form-item>
         </el-form>
         <div style="text-align:center">
@@ -29,9 +35,27 @@
             return {
                 form: {
                     name: '孙悟饭',
+                    idnumber: '110xxxxxxxxxxx1235',
                     gender: '男',
-                    dateofbirth: '1991-02-16'
+                    dateofbirth: '1991-04-3',
+                    age: 10
                 }
+            }
+        },
+        computed: {
+            age() {
+                let age = 0;
+                let birthDate = new Date(this.form.dateofbirth);
+                if (birthDate) {
+                    const today = new Date();
+                    age = today.getFullYear() - birthDate.getFullYear();
+                    let m = today.getMonth() - birthDate.getMonth();
+                    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) 
+                    {
+                        age--;
+                    }
+                }
+                return age;
             }
         }
     }
@@ -40,7 +64,7 @@
 <style>
     .infoframe {
         position: relative;
-        height: 350px;
+        height: 470px;
         width:800px;
         margin:0 auto;
         border-radius: 4px;

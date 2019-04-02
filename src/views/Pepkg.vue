@@ -7,7 +7,7 @@
         </div>
         <div class="pepkgpanel">
             <el-collapse accordion>
-                <el-collapse-item v-for="v in pepkgdata" :key="v.TSID" :title="getTds(v.TSID).TSName" :name="v.TSID">
+                <el-collapse-item v-for="v in pepkgdata" :key="v.TSID" :title="getTds(v.TSID).TSRemark" :name="v.TSID">
                     <el-table stripe style="font-size:12px" :data="v.GIDs">
                         <el-table-column type="expand">
                             <template slot-scope="scope">
@@ -60,7 +60,8 @@
             </el-collapse>
         </div>
         <div style="text-align:center">
-            <el-button type="primary" @click="nextstep">下一步</el-button>
+            <router-link to="/tds"><el-button type="primary" style="margin-right:20px">上一步</el-button></router-link>
+            <el-button type="primary" :disabled="!hasselected()" @click="nextstep">下一步</el-button>
         </div>
     </div>
 </template>
@@ -134,6 +135,7 @@
                 });
             },
             fetchFt2() {
+                //读取基表2
                 this.$http.get(restbase()+"ft2")
                 .then(response=>{
                     this.$root.ft2 = response.data.data;
@@ -152,6 +154,7 @@
                 });
             },
             nextstep() {
+                //对象转数组并过滤出已点选的key
                 const ar = Object.keys(this.selectedpkgs).filter(key=>this.selectedpkgs[key]);
                 this.$root.selectedpkgs = ar.map(v=>
                     this.$root.pkgs.find(p=>
@@ -159,7 +162,11 @@
                     )
                 );
                 this.$router.push('order');
+            },
+            hasselected() {
+                return Object.keys(this.selectedpkgs).filter(key=>this.selectedpkgs[key]).length > 0;
             }
+
         }
     }
 </script>
@@ -188,19 +195,6 @@
     .pepkgpanel {
         padding: 16px 36px 20px 36px;
     }
-/*
-    .el-table td {
-        padding: 4px 0;
-    }
-    .el-collapse-item__header, .el-collapse-item__wrap {
-        color:#555;
-        background-color: #C0D0F0;
-        padding:0 15px;
-    }
-    .el-collapse-item__content {
-        padding-bottom:15px;
-    }
-*/
     .checkflag {
         color:#0C8;
         font-size:18px;

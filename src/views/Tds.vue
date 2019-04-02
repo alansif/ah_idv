@@ -6,17 +6,11 @@
             </div>
         </div>
         <div class="tdstree">
-            <el-tree :data="tdsdata" show-checkbox node-key="id" ref="tree">
-                <div slot-scope="{ node, data }">
-                    <el-tooltip placement="right" effect="light" :disabled="data.value === undefined">
-                        <div slot="content">{{ data.value ? data.value.TSRemark : null}}</div>
-                        <span>{{ node.label }}</span>
-                    </el-tooltip>
-                </div>
+            <el-tree :data="tdsdata" show-checkbox node-key="id" ref="tree" :default-checked-keys="checkedkeys">
             </el-tree>
         </div>
         <div style="text-align:center">
-            <el-button type="primary" @click="nextstep">下一步</el-button>
+            <el-button type="primary" :disabled="!hasselected()" @click="nextstep">下一步</el-button>
         </div>
     </div>
 </template>
@@ -27,11 +21,15 @@
         name: 'tds',
         data() {
             return {
-                tdsdata: []
+                tdsdata: [],
+                checkedkeys:[]
             }
         },
         mounted() {
             this.fetchData();
+            if (this.$root.tds !== undefined) {
+                this.checkedkeys = this.$root.tds;
+            }
         },
         methods: {
             fetchData() {
@@ -45,9 +43,9 @@
                             return e.TSCategory === v.label
                         });
                         if (i === undefined) {
-                            this.tdsdata.push({label:e.TSCategory, children:[{label:e.TSName, id:e.TSID, value:e}]});
+                            this.tdsdata.push({label:e.TSCategory, children:[{label:e.TSRemark, id:e.TSID, value:e}]});
                         } else {
-                            i.children.push({label:e.TSName, id:e.TSID, value:e});
+                            i.children.push({label:e.TSRemark, id:e.TSID, value:e});
                         }
                     });
                 }, response=>{
@@ -62,6 +60,9 @@
             nextstep() {
                 this.$root.tds = this.$refs.tree.getCheckedKeys(true);
                 this.$router.push('pepkg');
+            },
+            hasselected() {
+                return (this.$refs.tree !== undefined) && this.$refs.tree.getCheckedKeys(true).length > 0;
             }
         }
     }
