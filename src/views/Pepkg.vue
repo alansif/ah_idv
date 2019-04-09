@@ -153,18 +153,23 @@
                     return v.Gid === GID;
                 });
             },
-            nextstep() {
+			getselectedpkgs() {
                 //对象转数组并过滤出已点选的key
                 const ar = Object.keys(this.selectedpkgs).filter(key=>this.selectedpkgs[key]);
-                this.$root.selectedpkgs = ar.map(v=>
+                return ar.map(v=>
                     this.$root.pkgs.find(p=>
                         String(p.PKID) === v
                     )
                 );
+			},
+            nextstep() {
+				this.$root.selectedpkgs = this.getselectedpkgs();
                 this.$router.push('order');
             },
             hasselected() {
-                return Object.keys(this.selectedpkgs).filter(key=>this.selectedpkgs[key]).length > 0;
+				//求唯一化的TSID数组
+				const tsids = this.getselectedpkgs().map(v => v.TSID).filter((v, i, a) => a.indexOf(v) === i);
+				return this.$root.tds.length === tsids.length;
             }
 
         }

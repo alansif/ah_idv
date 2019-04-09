@@ -33,7 +33,7 @@
         },
         methods: {
             fetchData() {
-                this.$http.get(restbase()+"tds")
+                this.$http.get(restbase()+"tds", {params:{gender:this.$root.gender}})
                 .then(response=>{
                     const d = response.data.data;
                     this.$root.alltds = d;

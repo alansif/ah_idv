@@ -45,8 +45,30 @@
                         </template>
                     </el-table-column>
                 </el-table>
+				<div v-if="unselecteditemlist.length > 0">
+					<el-button type="text" @click="dialogTableVisible=true" style="padding-bottom:0">当您选择更高级别的套餐时，将会获得更多检查项目，请点击此处查看详情</el-button>
+				</div>
             </div>
         </div>
+		<el-dialog :visible.sync="dialogTableVisible" width="80%" title="更多检查项目">
+                <el-table :data="unselecteditemlist" show-summary :summary-method="getSummaries">
+                    <el-table-column label="检查项目" :width="200">
+                        <template slot-scope="scope">
+                            {{ getG(scope.row).GNAME }}
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="医学意义" show-overflow-tooltip>
+                        <template slot-scope="scope">
+                            {{ getG(scope.row).GRemarks }}
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="价格" align="right" :width="100">
+                        <template slot-scope="scope">
+                            {{ getG(scope.row).GPrice + ".00"}}
+                        </template>
+                    </el-table-column>
+                </el-table>
+		</el-dialog>
         <div style="text-align:center;margin-bottom:60px;">
             <router-link to="/pepkg"><el-button type="primary" style="margin-right:20px">上一步</el-button></router-link>
             <el-button type="primary">确定</el-button>
@@ -60,7 +82,9 @@
         data() {
             return {
                 selectedpkgs: this.$root.selectedpkgs,
-                itemlist: []
+                itemlist: [],
+				unselecteditemlist: [],
+				dialogTableVisible: false
             }
         },
         mounted() {
@@ -68,6 +92,13 @@
                 pkg.GIDs.forEach(g => {
                     if (this.itemlist.indexOf(g) === -1) {
                         this.itemlist.push(g)
+                    }
+                });
+            });
+            this.$root.pkgs.forEach(pkg => {
+                pkg.GIDs.forEach(g => {
+                    if (this.itemlist.indexOf(g) === -1 && this.unselecteditemlist.indexOf(g) === -1) {
+                        this.unselecteditemlist.push(g)
                     }
                 });
             });

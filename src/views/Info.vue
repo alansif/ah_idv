@@ -23,7 +23,7 @@
             </el-form-item>
         </el-form>
         <div style="text-align:center">
-        <router-link to="/tds"><el-button type="primary">下一步</el-button></router-link>
+        <el-button type="primary" @click="nextstep">下一步</el-button>
         </div>
     </div>
 </template>
@@ -36,7 +36,7 @@
                 form: {
                     name: '孙悟饭',
                     idnumber: '110xxxxxxxxxxx1235',
-                    gender: '男',
+                    gender: '女',
                     dateofbirth: '1991-04-3',
                     age: 10
                 }
@@ -57,7 +57,13 @@
                 }
                 return age;
             }
-        }
+        },
+		methods: {
+            nextstep() {
+                this.$root.gender = this.form.gender === '男' ? '01' : '10';
+                this.$router.push('tds');
+            }
+		}
     }
 </script>
 
