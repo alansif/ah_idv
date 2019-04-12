@@ -136,7 +136,7 @@
             },
             fetchFt2() {
                 //读取基表2
-                this.$http.get(restbase()+"ft2")
+                this.$http.get(restbase()+"ft2", {params:{gender:this.$root.gender}})
                 .then(response=>{
                     this.$root.ft2 = response.data.data;
                 }, response=>{
@@ -167,10 +167,10 @@
                 this.$router.push('order');
             },
             hasselected() {
-				//求唯一化的TSID数组
-				const tsids = this.getselectedpkgs().map(v => v.TSID).filter((v, i, a) => a.indexOf(v) === i);
-				return this.$root.tds.length === tsids.length;
-            }
+				//const tsids = this.getselectedpkgs().map(v => v.TSID).filter((v, i, a) => a.indexOf(v) === i);	//求唯一化的TSID数组
+				//return this.$root.tds.length === tsids.length;	//要求每个目标疾病都至少选择一个套餐
+				return Object.keys(this.selectedpkgs).filter(key=>this.selectedpkgs[key]).length > 0;	//要求全局至少选择一个套餐
+           }
 
         }
     }

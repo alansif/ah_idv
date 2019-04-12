@@ -46,12 +46,12 @@
                     </el-table-column>
                 </el-table>
 				<div v-if="unselecteditemlist.length > 0">
-					<el-button type="text" @click="dialogTableVisible=true" style="padding-bottom:0">当您选择更高级别的套餐时，将会获得更多检查项目，请点击此处查看详情</el-button>
+					<el-button type="text" @click="dialogTableVisible=true" style="padding-bottom:0">点击此处查看未选项目</el-button>
 				</div>
             </div>
         </div>
 		<el-dialog :visible.sync="dialogTableVisible" width="80%" title="更多检查项目">
-                <el-table :data="unselecteditemlist" show-summary :summary-method="getSummaries">
+                <el-table :data="unselecteditemlist">
                     <el-table-column label="检查项目" :width="200">
                         <template slot-scope="scope">
                             {{ getG(scope.row).GNAME }}
@@ -95,6 +95,8 @@
                     }
                 });
             });
+			/*
+			//列出当前目标疾病下的所有未选项目
             this.$root.pkgs.forEach(pkg => {
                 pkg.GIDs.forEach(g => {
                     if (this.itemlist.indexOf(g) === -1 && this.unselecteditemlist.indexOf(g) === -1) {
@@ -102,6 +104,13 @@
                     }
                 });
             });
+			*/
+			//列出基表2下的所有未选项目
+			this.$root.ft2.forEach(item => {
+				if (this.itemlist.indexOf(item.Gid) === -1 && this.unselecteditemlist.indexOf(item.Gid) === -1) {
+					this.unselecteditemlist.push(item.Gid)
+				}
+			});
         },
         methods: {
             getTds(TSID) {
