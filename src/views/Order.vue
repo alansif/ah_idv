@@ -29,6 +29,7 @@
             </div>
             <div style="padding:0 20px">
                 <el-table :data="itemlist" show-summary :summary-method="getSummaries">
+					<el-table-column type="index" label=" " width="50" />
                     <el-table-column label="检查项目" :width="200">
                         <template slot-scope="scope">
                             {{ getG(scope.row).GNAME }}
@@ -52,6 +53,7 @@
         </div>
 		<el-dialog :visible.sync="dialogTableVisible" width="80%" title="更多检查项目">
                 <el-table :data="unselecteditemlist">
+					<el-table-column type="index" label=" " width="50" />
                     <el-table-column label="检查项目" :width="200">
                         <template slot-scope="scope">
                             {{ getG(scope.row).GNAME }}
