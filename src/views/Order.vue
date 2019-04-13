@@ -138,7 +138,7 @@
                 const s = data.reduce((prev, item) => this.getG(item).GPrice + prev, 0);
                 const sums = [];
                 sums[0] = '合计';
-                sums[2] = s + '.00';
+                sums[3] = s + '.00';
                 return sums;
             }
         }
