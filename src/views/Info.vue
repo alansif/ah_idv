@@ -34,18 +34,29 @@
         data() {
             return {
                 form: {
-                    name: '孙悟饭',
-                    idnumber: '110xxxxxxxxxxx1235',
-                    gender: '女',
-                    dateofbirth: '1991-04-3',
-                    age: 10
-                }
+                    name: '',
+                    idnumber: '',
+                    gender: '',
+                    dateofbirth: ''
+                },
+				birth:new Date()
             }
         },
+		mounted() {
+			this.form.name = this.$root.user.UserName;
+			this.form.idnumber = this.$root.user.PaperValue;
+			this.form.gender = this.$root.user.Sex;
+			this.form.dateofbirth = '1991-04-3';
+			if (this.form.idnumber.length === 18) {
+				const bd = this.form.idnumber.slice(6, 14);
+				this.birth = moment(bd, "YYYYMMDD")
+				this.form.dateofbirth = moment(this.birth).format('YYYY-MM-DD');
+			}
+		},
         computed: {
             age() {
                 let age = 0;
-                let birthDate = new Date(this.form.dateofbirth);
+                let birthDate = new Date(this.birth);
                 if (birthDate) {
                     const today = new Date();
                     age = today.getFullYear() - birthDate.getFullYear();
