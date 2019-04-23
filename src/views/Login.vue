@@ -5,16 +5,16 @@
                 登录
             </div>
         </div>
-        <el-form ref="form" :model="form" label-width="80px" class="loginform">
+        <el-form ref="form" :model="form" label-width="80px" class="loginform" @submit.native.prevent>
             <el-form-item label="证件号码">
-                <el-input v-model="form.idnumber"></el-input>
+                <el-input v-model="form.idnumber" :maxlength="18"></el-input>
             </el-form-item>
             <el-form-item label="手机号码">
-                <el-input v-model="form.phone"></el-input>
+                <el-input v-model="form.phone" :maxlength="11"></el-input>
             </el-form-item>
             <el-form-item label="验证码">
-                <el-input v-model="form.vcode" style="width:200px;margin-right:8px;"></el-input>
-				<el-button type="primary" @click="sendvcode">发送验证码</el-button>
+                <el-input v-model="form.vcode" :maxlength="6" style="width:160px;margin-right:8px;"></el-input>
+				<Timerbtn ref="tb" type="primary" @run="sendvcode" style="width:150px">发送验证码</Timerbtn>
             </el-form-item>
         </el-form>
         <div style="text-align:center">
@@ -24,7 +24,10 @@
 </template>
 
 <script>
+    /* eslint-disable */
     import {restbase} from '../rest'
+    import Timerbtn from '@/components/Timerbtn.vue'
+
     export default {
         name: 'login',
         data() {
@@ -36,19 +39,33 @@
                 }
             }
         },
+        components: {
+            Timerbtn
+        },
 		methods: {
 			sendvcode() {
                 this.$http.post(restbase() + "asp/SendVerifyInfo", {
                     SFZH: this.form.idnumber,
                     Phone: this.form.phone
                 }).then((response) => {
-                    // eslint-disable-next-line
                     console.log(response);
+                    const r = JSON.parse(response.data.d);
+                    if (r[0].code !== '0') {
+                        this.$notify.error({
+                            title: '错误',
+                            message: r[0].description
+                        });
+                    } else {
+                        this.$notify({
+                            title: '成功',
+                            message: '验证码已发送',
+                            type: 'success'
+                        });
+                        this.$refs.tb.start();
+                    }
                 }, (response) => {
-                    // eslint-disable-next-line
                     console.log(response);
                 }).catch((response) => {
-                    // eslint-disable-next-line
                     console.log(response);
                 });
 			},
@@ -58,17 +75,20 @@
                     Mobile: this.form.phone,
                     PWD: this.form.vcode
                 }).then((response) => {
-					const j = JSON.parse(response.data.d);
-					const d = j;
-					this.$root.user = d;
-                    // eslint-disable-next-line
-                    console.log(this.$root.user);
-					this.$router.push('info');
+                    const r = JSON.parse(response.data.d);
+                    console.log(r);
+                    if (r.code !== '0') {
+                        this.$notify.error({
+                            title: '错误',
+                            message: r.description
+                        });
+                    } else {
+                        this.$root.user = r;
+    					this.$router.push('info');
+                    }
                 }, (response) => {
-                    // eslint-disable-next-line
                     console.log(response);
                 }).catch((response) => {
-                    // eslint-disable-next-line
                     console.log(response);
                 });
             }

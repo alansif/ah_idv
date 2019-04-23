@@ -46,6 +46,13 @@
                         </template>
                     </el-table-column>
                 </el-table>
+                <div style="font-size:14px;margin:6px 0 10px 10px;">
+                    <el-row>
+                        <el-col :span="8">折后价格：{{discount}}</el-col>
+                        <el-col :span="8">额定金额：{{$root.user.FixedQuota}}</el-col>
+                        <el-col :span="8">应付款：{{Math.max(discount - parseInt($root.user.FixedQuota),0)}}</el-col>
+                    </el-row>
+                </div>
 				<div v-if="unselecteditemlist.length > 0">
 					<el-button type="text" @click="dialogTableVisible=true" style="padding-bottom:0">点击此处查看未选项目</el-button>
 				</div>
@@ -73,12 +80,13 @@
 		</el-dialog>
         <div style="text-align:center;margin-bottom:60px;">
             <router-link to="/pepkg"><el-button type="primary" style="margin-right:20px">上一步</el-button></router-link>
-            <el-button type="primary">确定</el-button>
+            <el-button type="primary" @click="cost">确定</el-button>
         </div>
     </div>
 </template>
 
 <script>
+    import {restbase} from '../rest'
     export default {
         name: 'order',
         data() {
@@ -140,6 +148,38 @@
                 sums[0] = '合计';
                 sums[3] = s + '.00';
                 return sums;
+            },
+            cost() {
+                const PKIDs = this.selectedpkgs.map(item => item.PKID);
+                this.$http.post(restbase() + "asp/SetToPayment", {
+                    SFZH: this.$root.user.PaperValue,
+                    PackIDs: PKIDs
+                }).then((response) => {
+                    console.log(response);
+                    const r = JSON.parse(response.data.d);
+                    if (r.code !== '0') {
+                        this.$notify.error({
+                            title: '错误',
+                            message: r.description
+                        });
+                    } else {
+                        this.$notify({
+                            title: '成功',
+                            message: '已出签',
+                            type: 'success'
+                        });
+                    }
+                }, (response) => {
+                    console.log(response);
+                }).catch((response) => {
+                    console.log(response);
+                });
+            }
+        },
+        computed: {
+            discount() {
+                const s = this.itemlist.reduce((prev, item) => this.getG(item).GPrice + prev, 0);
+                return s * 0.8 + '.00';
             }
         }
     }
