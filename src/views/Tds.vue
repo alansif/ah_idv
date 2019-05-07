@@ -59,6 +59,16 @@
             },
             nextstep() {
                 this.$root.tds = this.$refs.tree.getCheckedKeys(true);
+                this.$http.post(restbase() + "asp/SetTargetSisease", {
+                    SFZH: this.$root.user.PaperValue,
+                    TSIDs: this.$root.tds
+                }).then((response) => {
+                    console.log(response);
+                }, (response) => {
+                    console.log(response);
+                }).catch((response) => {
+                    console.log(response);
+                });
                 this.$router.push('pepkg');
             },
             hasselected() {

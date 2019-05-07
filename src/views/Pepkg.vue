@@ -164,6 +164,17 @@
 			},
             nextstep() {
 				this.$root.selectedpkgs = this.getselectedpkgs();
+                const PKIDs = this.$root.selectedpkgs.map(item => item.PKID);
+                this.$http.post(restbase() + "asp/SetPackageDisease", {
+                    SFZH: this.$root.user.PaperValue,
+                    PackIDs: PKIDs
+                }).then((response) => {
+                    console.log(response);
+                }, (response) => {
+                    console.log(response);
+                }).catch((response) => {
+                    console.log(response);
+                });
                 this.$router.push('order');
             },
             hasselected() {
